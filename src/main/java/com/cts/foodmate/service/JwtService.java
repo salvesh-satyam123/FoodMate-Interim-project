@@ -19,6 +19,8 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
 
 	public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+	
+	//generating a token
 	public String generateToken(String userName) {
 		Map<String, Object> claims = new HashMap<>();
 		return createToken(claims, userName);
@@ -32,20 +34,23 @@ public class JwtService {
 				.setExpiration(new Date(System.currentTimeMillis() + 2 * 1000 * 60 * 60))
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 	}
-
+	
+	//creating secret sign key
 	private Key getSignKey() {
 		byte[] keyBytes= Decoders.BASE64.decode(SECRET);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
-
+	
+	//extracting username from token  
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
-
+	
 	public Date extractExpiration(String token) {
 		return extractClaim(token, Claims::getExpiration);
 	}
-
+	
+	//it will load all the claims and find the token , and return it back 
 	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = extractAllClaims(token);
 		return claimsResolver.apply(claims);
@@ -59,11 +64,13 @@ public class JwtService {
 				.parseClaimsJws(token)
 				.getBody();
 	}
-
+	
+	//verifying if token is expired
 	private Boolean isTokenExpired(String token) {
 		return extractExpiration(token).before(new Date());
 	}
-
+	
+	
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = extractUsername(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

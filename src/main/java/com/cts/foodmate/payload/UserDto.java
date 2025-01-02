@@ -1,7 +1,6 @@
 package com.cts.foodmate.payload;
 
 import com.cts.foodmate.entity.UserInfo;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

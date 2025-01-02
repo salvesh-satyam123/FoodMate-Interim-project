@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.cts.foodmate.entity.Order;
 
 @Repository
-public interface OrderDao extends JpaRepository<Order,Long>{
+public interface OrderRepository extends JpaRepository<Order,Long>{
  
 	
 	public List<Order> findByUserId(long userId);

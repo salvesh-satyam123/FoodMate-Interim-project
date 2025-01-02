@@ -1,6 +1,6 @@
 package com.cts.foodmate.dto;
 
-
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -12,10 +12,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserInfoDTO {
-
+public class ProductDTO {
+	
 	private String name;
-	private String emailId;
-	private String password;
-	private String role;	
+
+	private String image;
+	
+	@NotNull
+	private long price;
 }

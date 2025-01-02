@@ -1,4 +1,5 @@
 package com.cts.foodmate.controller;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -35,58 +36,49 @@ public class UserController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
-	
+
 	@Autowired
 	private UserInfoRepository repository;
 
+
 	@PostMapping("/addNewUser")
 	public String addNewUser(@RequestBody UserInfo userInfo) {
-		
 		return service.addUser(userInfo);
 	}
-	
-//	@GetMapping("/exception/redirect")
-//	public String exception() {
-//		throw new AccessDeniedException("not found");
-//	}
-	
-//	@PostMapping("/loadDummyData/{numberOfData}")
-//	public boolean loadDummyData(@PathVariable int numberOfData) {
-//		return service.loadDummyData(numberOfData);
-//	}
+
+	@GetMapping("/exception/redirect")
+	public String exception() {
+		throw new AccessDeniedException("not found");
+	}
 
 	@PostMapping("/generateToken")
 	public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 		if (authentication.isAuthenticated()) {
-			System.out.println(authentication.isAuthenticated());
+			//System.out.println(authentication.isAuthenticated());
 			return jwtService.generateToken(authRequest.getUsername());
 		} else {
 			throw new RuntimeException("invalid user request !");
 		}
 	}
-		
-	@GetMapping("/userdetails")
+
+	@GetMapping("/admin/userdetails")
 	public List<UserInfo> getProfiles() {
 		return service.getUser();
-		
 	}
-	
+
 	@GetMapping("/user/profile")
-	public UserInfo userProfile(@RequestHeader("Authorization")String authHeader) {
-	String token = null;
+	public UserInfo userProfile(@RequestHeader("Authorization") String authHeader) {
+		String token = null;
 		String username = null;
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			token = authHeader.substring(7);
 			username = jwtService.extractUsername(token);
 		}
-		
+
 		Optional<UserInfo> userDetail = repository.findByEmailId(username);
-
-		UserDto user=new UserDto(userDetail.get());
-		
-		return userDetail.get();		
-	}	
+	//	UserDto user = new UserDto(userDetail.get());
+		return userDetail.get();
+	}
 }
-

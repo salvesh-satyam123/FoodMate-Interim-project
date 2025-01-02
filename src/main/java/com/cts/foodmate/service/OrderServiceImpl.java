@@ -17,7 +17,7 @@ import com.cts.foodmate.entity.Order;
 import com.cts.foodmate.entity.UserInfo;
 import com.cts.foodmate.exception.OrderNotFoundException;
 import com.cts.foodmate.exception.UserNotExistException;
-import com.cts.foodmate.repository.OrderDao;
+import com.cts.foodmate.repository.OrderRepository;
 import com.cts.foodmate.repository.UserInfoRepository;
 import com.cts.foodmate.utils.OrderDetails;
 import com.cts.foodmate.utils.Revenue;
@@ -28,7 +28,8 @@ import jakarta.transaction.Transactional;
 public class OrderServiceImpl implements OrderService {
 
 	@Autowired
-	OrderDao orderdao;
+	OrderRepository orderRepository;
+	
 	@Autowired
 	private UserInfoRepository userInfoRepository;
 
@@ -68,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setSummary(summary);
 		order.setPrice(price);
 		logger.info("{}", order);
-		orderdao.save(order);
+		orderRepository.save(order);
 		cartService.moveFromCartToOrder(userId);
 		
 
@@ -87,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
 
 		List<Order> res = new ArrayList<>();
 
-		orderdao.findByUserId(userId).stream().forEach(order -> {
+		orderRepository.findByUserId(userId).stream().forEach(order -> {
 			String summary = order.getSummary();
 
 			String[] subSummary = summary.split(";");
@@ -113,13 +114,13 @@ public class OrderServiceImpl implements OrderService {
 
 		logger.info("In Get Orders Service");
 
-		if (!orderdao.findById(oid).isPresent()) {
+		if (!orderRepository.findById(oid).isPresent()) {
 
 			logger.warn("Invalid Order ID");
 			throw new OrderNotFoundException("Invalid Order ID");
 		}
 
-		Order order = orderdao.findById(oid).get();
+		Order order = orderRepository.findById(oid).get();
 
 		String summary = order.getSummary();
 
@@ -136,7 +137,7 @@ public class OrderServiceImpl implements OrderService {
 	public Revenue getRevenue(Date date) {
 		long sum = 0;
 		List<Order> orders = new ArrayList<>();
-		orderdao.getAllOrderBydate(date).forEach(order -> {
+		orderRepository.getAllOrderBydate(date).forEach(order -> {
 			orders.add(order);
 		});
 
@@ -156,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
 	public Revenue getRevenueMonthly(Date date1, Date date2) {
 		long sum = 0;
 		List<Order> orders = new ArrayList<>();
-		orderdao.getAllOrderBetweendate(date1, date2).forEach(order -> {
+		orderRepository.getAllOrderBetweendate(date1, date2).forEach(order -> {
 			orders.add(order);
 		});
 

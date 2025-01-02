@@ -41,7 +41,6 @@ public class GlobalExceptionHandler {
 	}
 	
 	
-	
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ApiResponse> accessunauthorized(AccessDeniedException ex)
 	{
